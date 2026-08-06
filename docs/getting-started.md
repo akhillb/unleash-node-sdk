@@ -1,0 +1,30 @@
+---
+title: Getting started
+excerpt: Install the Node SDK and evaluate your first feature flag.
+---
+
+## Install
+
+```bash
+npm install unleash-client
+```
+
+## Initialize
+
+```javascript
+const { initialize } = require('unleash-client');
+
+const unleash = initialize({
+  url: 'https://unleash.example.com/api',
+  appName: 'my-app',
+  customHeaders: { Authorization: process.env.UNLEASH_API_TOKEN },
+});
+
+unleash.on('synchronized', () => {
+  console.log(unleash.isEnabled('checkout.new-flow'));
+});
+```
+
+The client fetches flags from [Get client features](doc:get-client-features) and
+re-fetches on the `refreshInterval`. Until the first fetch completes,
+`isEnabled` returns the fallback value you pass, or `false`.
