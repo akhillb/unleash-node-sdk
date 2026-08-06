@@ -13,7 +13,26 @@ Every option below is a property on the object passed to `initialize()` or
 | `refreshInterval` | number | `15000` | Milliseconds between flag fetches. |
 | `metricsInterval` | number | `60000` | Milliseconds between metrics uploads. |
 | `disableMetrics` | boolean | `false` | Stop reporting usage metrics entirely. |
-| `legacyAudit` | boolean | `false` | Deprecated. Send evaluation records with the metrics payload. See [Legacy audit opt-in](/sdk/legacy-audit-opt-in). |
+| `auditSink` | object | `undefined` | Enable audit reporting by pointing the SDK at an audit endpoint. See [`auditSink`](#audit-sink). |
+
+## `auditSink`
+
+Set `auditSink` to buffer evaluation records in memory and flush them to a
+dedicated audit endpoint. Leaving it unset (the default) disables audit
+reporting.
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `url` | string | — | Absolute URL of the audit endpoint, for example `https://unleash.example.com/api/client/audit`. Required to enable the sink. |
+| `batchSize` | number | `50` | Records buffered before a flush is triggered. |
+| `flushIntervalMs` | number | `10000` | Milliseconds between flushes when the batch has not filled. |
+
+`batchSize` and `flushIntervalMs` must be positive finite numbers. The SDK
+throws at startup if either is set to zero, a negative number, `NaN`, or
+`Infinity`.
+
+Call `unleash.getAuditSinkConfig()` to read back the resolved configuration,
+including any defaults the SDK filled in.
 
 ## Example
 
@@ -22,5 +41,10 @@ initialize({
   url: 'https://unleash.example.com/api',
   appName: 'my-app',
   refreshInterval: 10000,
+  auditSink: {
+    url: 'https://unleash.example.com/api/client/audit',
+    batchSize: 100,
+    flushIntervalMs: 5000,
+  },
 });
 ```

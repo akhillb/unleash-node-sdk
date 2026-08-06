@@ -49,6 +49,38 @@
           "401": { "description": "The API token is missing or not permitted to connect." }
         }
       }
+    },
+    "/client/audit": {
+      "post": {
+        "operationId": "postClientAudit",
+        "summary": "Post client audit records",
+        "description": "Receives a batch of evaluation records from the SDK's audit sink. The SDK sends a batch when `batchSize` records have accumulated or every `flushIntervalMs` milliseconds, whichever comes first.",
+        "tags": ["Client"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AuditBatch" },
+              "example": {
+                "appName": "my-app",
+                "instanceId": "my-app-7f9c",
+                "records": [
+                  {
+                    "featureName": "checkout.new-flow",
+                    "enabled": true,
+                    "timestamp": "2026-08-06T12:00:00Z"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": { "description": "Batch accepted for processing." },
+          "400": { "description": "The batch is malformed." },
+          "401": { "description": "The API token is missing or not permitted to send audit records." }
+        }
+      }
     }
   },
   "components": {
@@ -74,6 +106,27 @@
           "name": { "type": "string" },
           "type": { "type": "string" },
           "enabled": { "type": "boolean" }
+        }
+      },
+      "AuditBatch": {
+        "type": "object",
+        "required": ["appName", "records"],
+        "properties": {
+          "appName": { "type": "string", "description": "The reporting application's `appName`." },
+          "instanceId": { "type": "string", "description": "The SDK instance identifier." },
+          "records": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AuditRecord" }
+          }
+        }
+      },
+      "AuditRecord": {
+        "type": "object",
+        "required": ["featureName", "enabled", "timestamp"],
+        "properties": {
+          "featureName": { "type": "string" },
+          "enabled": { "type": "boolean" },
+          "timestamp": { "type": "string", "format": "date-time" }
         }
       }
     }
