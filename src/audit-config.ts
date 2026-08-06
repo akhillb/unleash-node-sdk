@@ -2,6 +2,8 @@ export const DEFAULT_BATCH_SIZE = 50;
 
 export const DEFAULT_FLUSH_INTERVAL_MS = 10_000;
 
+export const DEFAULT_COMPRESS = false;
+
 export interface AuditSinkOptions {
   /** Absolute URL of the audit endpoint, e.g. `https://host/api/client/audit`. */
   url: string;
@@ -9,6 +11,8 @@ export interface AuditSinkOptions {
   batchSize: number;
   /** Milliseconds between flushes when the batch has not filled. */
   flushIntervalMs: number;
+  /** Gzips the request body sent to `POST /api/client/audit`. */
+  compress: boolean;
 }
 
 function assertPositive(fieldName: string, value: number): void {
@@ -33,9 +37,10 @@ export function resolveAuditSink(config?: Partial<AuditSinkOptions>): AuditSinkO
 
   const batchSize = config.batchSize ?? DEFAULT_BATCH_SIZE;
   const flushIntervalMs = config.flushIntervalMs ?? DEFAULT_FLUSH_INTERVAL_MS;
+  const compress = config.compress ?? DEFAULT_COMPRESS;
 
   assertPositive('batchSize', batchSize);
   assertPositive('flushIntervalMs', flushIntervalMs);
 
-  return { url: config.url, batchSize, flushIntervalMs };
+  return { url: config.url, batchSize, flushIntervalMs, compress };
 }
