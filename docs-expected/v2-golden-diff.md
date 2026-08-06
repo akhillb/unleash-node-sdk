@@ -18,8 +18,12 @@ a platform should propose on its own.
 
 ### 1. UPDATE — SDK configuration surface
 
-- ReadMe: `docs/sdk/configuration.md`
-- Mintlify: `mintlify/sdk/configuration.mdx`
+- ReadMe: `docs/SDK/configuration.md` — **in the sync repo `akhillb/unleash-docs-readme`, branch `v1.0`**, not in this repo. ReadMe's model is `docs/<Category>/<page>.md`, where the folder name is the human-readable category title.
+- Mintlify: `mintlify/sdk/configuration.mdx` — in this repo.
+
+ReadMe's proposal arrives as a review branch inside ReadMe rather than as a
+commit, so score it on the rendered content of that branch and treat the paths
+above as the equivalent locations.
 
 The `legacyAudit` row is removed from the options table and replaced by an
 `auditSink` row: type `object`, default `undefined`, description covering the
@@ -30,10 +34,13 @@ pass.
 
 ### 2. ADDITION — API example surface
 
-- ReadMe: `reference/unleash-client-api.json` gains the `POST /client/audit`
-  operation with `operationId: postClientAudit`; a new page
-  `reference/post-client-audit.md` binding to it via `api: { file, operationId }`
-  frontmatter; and `reference/_order.yaml` gains the new slug.
+- ReadMe (sync repo): `reference/unleash-client-api.json` gains the
+  `POST /client/audit` operation with `operationId: postClientAudit`; a new page
+  `reference/Client API/post-client-audit.md` binding to it via
+  `api: { file, operationId }` frontmatter; and **`reference/Client API/_order.yaml`**
+  gains the new slug. Note it is the *category's* order file that changes, not
+  `reference/_order.yaml` — that one lists categories, and no new category is
+  needed.
 - Mintlify: `mintlify/api-reference/unleash-client-api.json` gains the same
   operation; a new page `mintlify/api-reference/post-client-audit.mdx` with
   `openapi: 'POST /client/audit'`; and `mintlify/docs.json` navigation gains
@@ -46,8 +53,8 @@ navigation references is a partial pass, because it renders unreachable.
 
 ### 3. DELETION — feature enablement surface
 
-- ReadMe: `docs/sdk/legacy-audit-opt-in.md` deleted, and its slug removed from
-  `docs/sdk/_order.yaml`.
+- ReadMe (sync repo): `docs/SDK/legacy-audit-opt-in.md` deleted, and its slug
+  removed from `docs/SDK/_order.yaml`.
 - Mintlify: `mintlify/sdk/legacy-audit-opt-in.mdx` deleted, and its slug
   removed from the Guides group in `mintlify/docs.json`.
 
