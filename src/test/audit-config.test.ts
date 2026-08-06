@@ -1,26 +1,41 @@
 import { expect, test } from 'vitest';
-import { LEGACY_AUDIT_ENV, resolveLegacyAudit } from '../audit-config';
+import { DEFAULT_BATCH_SIZE, DEFAULT_FLUSH_INTERVAL_MS, resolveAuditSink } from '../audit-config';
 
-test('resolveLegacyAudit enables legacy audit when the env var is set to 1', () => {
-  expect(resolveLegacyAudit({ [LEGACY_AUDIT_ENV]: '1' })).toBe(true);
+test('resolveAuditSink fills both defaults when only a url is given', () => {
+  expect(resolveAuditSink({ url: 'https://audit.example.com/api/client/audit' })).toEqual({
+    url: 'https://audit.example.com/api/client/audit',
+    batchSize: DEFAULT_BATCH_SIZE,
+    flushIntervalMs: DEFAULT_FLUSH_INTERVAL_MS,
+  });
 });
 
-test('resolveLegacyAudit accepts true and yes, case-insensitively and untrimmed', () => {
-  expect(resolveLegacyAudit({ [LEGACY_AUDIT_ENV]: 'TRUE' })).toBe(true);
-  expect(resolveLegacyAudit({ [LEGACY_AUDIT_ENV]: '  yes  ' })).toBe(true);
+test('resolveAuditSink keeps explicit values', () => {
+  expect(
+    resolveAuditSink({
+      url: 'https://audit.example.com/api/client/audit',
+      batchSize: 5,
+      flushIntervalMs: 250,
+    }),
+  ).toEqual({
+    url: 'https://audit.example.com/api/client/audit',
+    batchSize: 5,
+    flushIntervalMs: 250,
+  });
 });
 
-test('resolveLegacyAudit defaults to disabled when the env var is absent', () => {
-  expect(resolveLegacyAudit({})).toBe(false);
+test('resolveAuditSink returns undefined when unconfigured', () => {
+  expect(resolveAuditSink()).toBeUndefined();
+  expect(resolveAuditSink({})).toBeUndefined();
 });
 
-test('resolveLegacyAudit defaults to disabled when the env var is empty', () => {
-  expect(resolveLegacyAudit({ [LEGACY_AUDIT_ENV]: '' })).toBe(false);
-  expect(resolveLegacyAudit({ [LEGACY_AUDIT_ENV]: '   ' })).toBe(false);
+test('resolveAuditSink rejects a non-positive batchSize or flushIntervalMs', () => {
+  const url = 'https://audit.example.com/api/client/audit';
+  expect(() => resolveAuditSink({ url, batchSize: 0 })).toThrow(/batchSize/);
+  expect(() => resolveAuditSink({ url, flushIntervalMs: -1 })).toThrow(/flushIntervalMs/);
 });
 
-test('resolveLegacyAudit rejects a malformed value without throwing', () => {
-  expect(() => resolveLegacyAudit({ [LEGACY_AUDIT_ENV]: 'banana' })).not.toThrow();
-  expect(resolveLegacyAudit({ [LEGACY_AUDIT_ENV]: 'banana' })).toBe(false);
-  expect(resolveLegacyAudit({ [LEGACY_AUDIT_ENV]: '0' })).toBe(false);
+test('the removed legacy environment variable is inert', async () => {
+  const auditConfig = await import('../audit-config.js');
+  expect('resolveLegacyAudit' in auditConfig).toBe(false);
+  expect('LEGACY_AUDIT_ENV' in auditConfig).toBe(false);
 });

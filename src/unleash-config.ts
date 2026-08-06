@@ -1,3 +1,4 @@
+import type { AuditSinkOptions } from './audit-config';
 import type { ClientFeaturesResponse } from './feature';
 import type { CustomHeaders, CustomHeadersFunction } from './headers';
 import type { HttpOptions } from './http-options';
@@ -36,5 +37,5 @@ export interface UnleashConfig {
   experimentalMode?: Mode;
   sdkFlavor?: string;
   sdkFlavorVersion?: string;
-  legacyAudit?: boolean;
+  auditSink?: Partial<AuditSinkOptions>;
 }

@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events';
 import { tmpdir } from 'node:os';
-import { resolveLegacyAudit } from './audit-config';
+import { type AuditSinkOptions, resolveAuditSink } from './audit-config';
 import Client, { type Name } from './client';
 import type { Context } from './context';
 import { type ImpressionEvent, UnleashEvents } from './events';
@@ -57,7 +57,7 @@ export class Unleash extends EventEmitter {
 
   public impactMetrics: MetricsAPI;
 
-  private legacyAudit: boolean;
+  private auditSink?: AuditSinkOptions;
 
   constructor({
     appName,
@@ -86,13 +86,13 @@ export class Unleash extends EventEmitter {
     experimentalMode = { type: 'polling', format: 'full' },
     sdkFlavor,
     sdkFlavorVersion,
-    legacyAudit = resolveLegacyAudit(),
+    auditSink,
   }: UnleashConfig) {
     super();
 
     Unleash.instanceCount++;
 
-    this.legacyAudit = legacyAudit;
+    this.auditSink = resolveAuditSink(auditSink);
 
     this.on(UnleashEvents.Error, (error) => {
       // Only if there does not exist other listeners for this event.
@@ -224,8 +224,8 @@ export class Unleash extends EventEmitter {
     }
   }
 
-  isLegacyAuditEnabled(): boolean {
-    return this.legacyAudit;
+  getAuditSinkConfig(): AuditSinkOptions | undefined {
+    return this.auditSink;
   }
 
   /**
