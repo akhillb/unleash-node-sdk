@@ -7,12 +7,15 @@
     "groups": [
       {
         "group": "Guides",
-        "pages": ["getting-started", "sdk/configuration", "sdk/legacy-audit-opt-in"]
+        "pages": ["getting-started", "sdk/configuration"]
       },
       {
         "group": "API reference",
-        "pages": ["api-reference/get-client-features"]
+        "pages": ["api-reference/get-client-features", "api-reference/post-client-audit"]
       }
     ]
-  }
+  },
+  "redirects": [
+    { "source": "/sdk/legacy-audit-opt-in", "destination": "/sdk/configuration" }
+  ]
 }

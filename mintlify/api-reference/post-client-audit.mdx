@@ -1,0 +1,8 @@
+---
+title: 'Post client audit records'
+openapi: 'POST /client/audit'
+---
+
+The SDK calls this endpoint when [`auditSink`](/sdk/configuration#audit-sink)
+is configured. It sends a batch once `batchSize` records have accumulated or
+every `flushIntervalMs` milliseconds, whichever comes first.
