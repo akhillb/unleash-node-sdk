@@ -1,0 +1,81 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Unleash Client API",
+    "version": "1.0.0",
+    "description": "The endpoints an Unleash SDK calls at runtime."
+  },
+  "servers": [{ "url": "https://unleash.example.com/api" }],
+  "security": [{ "apiKey": [] }],
+  "paths": {
+    "/client/features": {
+      "get": {
+        "operationId": "getClientFeatures",
+        "summary": "Get client features",
+        "description": "Returns every feature flag the supplied API token can evaluate.",
+        "tags": ["Client"],
+        "parameters": [
+          {
+            "name": "project",
+            "in": "query",
+            "required": false,
+            "description": "Restrict the response to a single project.",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "required": false,
+            "description": "ETag from a previous response. The server replies 304 when nothing changed.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The current set of feature flags.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ClientFeatures" },
+                "example": {
+                  "version": 2,
+                  "features": [
+                    { "name": "checkout.new-flow", "type": "release", "enabled": true }
+                  ]
+                }
+              }
+            }
+          },
+          "304": { "description": "Not modified — the supplied ETag is still current." },
+          "401": { "description": "The API token is missing or not permitted to connect." }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "apiKey": { "type": "apiKey", "in": "header", "name": "Authorization" }
+    },
+    "schemas": {
+      "ClientFeatures": {
+        "type": "object",
+        "required": ["version", "features"],
+        "properties": {
+          "version": { "type": "integer" },
+          "features": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Feature" }
+          }
+        }
+      },
+      "Feature": {
+        "type": "object",
+        "required": ["name", "enabled"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string" },
+          "enabled": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

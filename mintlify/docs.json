@@ -1,0 +1,19 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Unleash Node SDK",
+  "colors": { "primary": "#1A4049" },
+  "navigation": {
+    "groups": [
+      {
+        "group": "Guides",
+        "pages": ["getting-started", "sdk/configuration", "sdk/legacy-audit-opt-in"]
+      },
+      {
+        "group": "API reference",
+        "openapi": "api-reference/unleash-client-api.json",
+        "pages": ["api-reference/get-client-features"]
+      }
+    ]
+  }
+}
