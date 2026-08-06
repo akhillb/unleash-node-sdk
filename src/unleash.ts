@@ -1,5 +1,6 @@
 import { EventEmitter } from 'node:events';
 import { tmpdir } from 'node:os';
+import { resolveLegacyAudit } from './audit-config';
 import Client, { type Name } from './client';
 import type { Context } from './context';
 import { type ImpressionEvent, UnleashEvents } from './events';
@@ -56,6 +57,8 @@ export class Unleash extends EventEmitter {
 
   public impactMetrics: MetricsAPI;
 
+  private legacyAudit: boolean;
+
   constructor({
     appName,
     environment = 'default',
@@ -83,10 +86,13 @@ export class Unleash extends EventEmitter {
     experimentalMode = { type: 'polling', format: 'full' },
     sdkFlavor,
     sdkFlavorVersion,
+    legacyAudit = resolveLegacyAudit(),
   }: UnleashConfig) {
     super();
 
     Unleash.instanceCount++;
+
+    this.legacyAudit = legacyAudit;
 
     this.on(UnleashEvents.Error, (error) => {
       // Only if there does not exist other listeners for this event.
@@ -216,6 +222,10 @@ export class Unleash extends EventEmitter {
     if (!disableAutoStart) {
       process.nextTick(async () => this.start());
     }
+  }
+
+  isLegacyAuditEnabled(): boolean {
+    return this.legacyAudit;
   }
 
   /**

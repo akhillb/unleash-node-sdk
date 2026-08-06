@@ -36,4 +36,5 @@ export interface UnleashConfig {
   experimentalMode?: Mode;
   sdkFlavor?: string;
   sdkFlavorVersion?: string;
+  legacyAudit?: boolean;
 }
